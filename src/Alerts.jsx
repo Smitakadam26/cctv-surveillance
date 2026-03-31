@@ -1,25 +1,30 @@
 import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:5000");
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
 
-  useEffect(() => {
-    socket.on("new-alert", (alert) => {
-      setAlerts(prev => [alert, ...prev]);
-    });
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
+      const data = await res.json();
+      setAlerts(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-    return () => {
-      socket.off("new-alert");
-    };
+  useEffect(() => {
+    fetchAlerts(); // initial load
+
+    const interval = setInterval(fetchAlerts, 3000); // every 3 sec
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <div>
-      {alerts.map((a, i) => (
-        <div key={i}>
+      {alerts.map((a) => (
+        <div key={a.id}>
           {a.crime_type} - {a.location}
         </div>
       ))}
