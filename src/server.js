@@ -4,23 +4,28 @@ const { Server } = require('socket.io');
 
 const app = express();
 const server = http.createServer(app);
+
 const io = new Server(server, {
   cors: { origin: "*" }
 });
 
-app.use(express.json({ limit: '50mb' }));
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
 
-app.post('/api/alerts', (req, res) => {
-  const alert = req.body;
-    console.log(req.body);
-  console.log("--- NEW ALERT RECEIVED ---");
-  console.log(`TIME: ${alert.timestamp}`);
-  console.log(`TYPE: ${alert.crime_type}`);
-  console.log(`LOC : ${alert.location}`);
+  // 🔥 RECEIVE alert from CCTV/AI
+  socket.on("send-alert", (alert) => {
+    console.log("--- NEW ALERT RECEIVED ---");
+    console.log(`TIME: ${alert.timestamp}`);
+    console.log(`TYPE: ${alert.crime_type}`);
+    console.log(`LOC : ${alert.location}`);
 
-  io.emit("new-alert", alert);
+    // 🔥 BROADCAST to all frontend clients
+    io.emit("new-alert", alert);
+  });
 
-  res.status(201).json({ message: "Alert processed successfully" });
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
 });
 
-server.listen(5000, () => console.log('Server running on port 5000'));
+server.listen(5000, () => console.log("WebSocket server running on port 5000"));
