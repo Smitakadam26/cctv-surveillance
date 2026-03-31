@@ -89,9 +89,9 @@ function Alerts() {
   }, []);
 
   const getColor = (priority) => {
-    if (priority === "HIGH") return "#c36f6f";
-    if (priority === "MEDIUM") return "#ab8a1d";
-    return "#d4e3ed";
+    if (priority === "HIGH") return "#ffcccc";
+    if (priority === "MEDIUM") return "#fff3cd";
+    return "#d4edda";
   };
 
   return (
