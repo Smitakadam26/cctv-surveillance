@@ -10,7 +10,6 @@ function App() {
         <Route path="/" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="alerts" element={<AlertsList />} />
-          {/* Fallback route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
