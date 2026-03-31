@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
+  const alertsMap = useRef(new Map()); // ✅ fast storage
 
-  // ✅ Convert your custom timestamp → JS time
+  // ✅ Parse custom timestamp
   const parseCustomDate = (str) => {
     if (!str) return Date.now();
 
@@ -32,54 +33,61 @@ function Alerts() {
 
         const newAlerts = Array.isArray(data) ? data : [data];
 
-        setAlerts((prev) => {
-          const now = Date.now();
+        let updated = false;
 
-          // ✅ Merge new + old alerts
-          const merged = [...newAlerts, ...prev];
-
-          // ✅ Remove duplicates using ID
-          const unique = merged.filter(
-            (item, index, self) =>
-              index === self.findIndex((a) => a.id === item.id)
-          );
-
-          // ✅ Keep only last 1 minutes
-          const filtered = unique.filter((a) => {
-            const alertTime = parseCustomDate(a.timestamp);
-            return now - alertTime <= 1 * 60 * 1000;
-          });
-
-          // ✅ Sort by priority + latest time
-          const sorted = filtered.sort((a, b) => {
-            const priorityOrder = {
-              HIGH: 3,
-              MEDIUM: 2,
-              LOW: 1,
-            };
-
-            return (
-              (priorityOrder[b.priority] || 0) -
-                (priorityOrder[a.priority] || 0) ||
-              parseCustomDate(b.timestamp) -
-                parseCustomDate(a.timestamp)
-            );
-          });
-
-          return sorted;
+        newAlerts.forEach((alert) => {
+          if (!alertsMap.current.has(alert.id)) {
+            alertsMap.current.set(alert.id, alert);
+            updated = true;
+          }
         });
+
+        if (updated) {
+          updateState();
+        }
+
       } catch (err) {
         console.error("Fetch error:", err);
       }
     };
 
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 3000); // every 3 sec
+    const updateState = () => {
+      const now = Date.now();
 
-    return () => clearInterval(interval);
+      // ✅ Remove old alerts (5 min)
+      for (let [id, alert] of alertsMap.current) {
+        const time = parseCustomDate(alert.timestamp);
+        if (now - time > 5 * 60 * 1000) {
+          alertsMap.current.delete(id);
+        }
+      }
+
+      // ✅ Convert to array + sort
+      const sorted = Array.from(alertsMap.current.values()).sort((a, b) => {
+        const priorityOrder = { HIGH: 3, MEDIUM: 2, LOW: 1 };
+
+        return (
+          (priorityOrder[b.priority] || 0) -
+            (priorityOrder[a.priority] || 0) ||
+          parseCustomDate(b.timestamp) -
+            parseCustomDate(a.timestamp)
+        );
+      });
+
+      setAlerts(sorted);
+    };
+
+    fetchAlerts();
+
+    const fetchInterval = setInterval(fetchAlerts, 5000); // ✅ slower polling
+    const cleanupInterval = setInterval(updateState, 10000); // ✅ cleanup separately
+
+    return () => {
+      clearInterval(fetchInterval);
+      clearInterval(cleanupInterval);
+    };
   }, []);
 
-  // ✅ UI Color based on priority
   const getColor = (priority) => {
     if (priority === "HIGH") return "#ffcccc";
     if (priority === "MEDIUM") return "#fff3cd";
@@ -110,17 +118,6 @@ function Alerts() {
           ⏰ {a.timestamp}
           <br />
           🚨 Priority: {a.priority}
-
-          {/* ✅ Optional image preview */}
-          {a.image_data && (
-            <div style={{ marginTop: "10px" }}>
-              <img
-                src={`data:image/jpeg;base64,${a.image_data}`}
-                alt="alert"
-                style={{ width: "200px", borderRadius: "6px" }}
-              />
-            </div>
-          )}
         </div>
       ))}
     </div>
