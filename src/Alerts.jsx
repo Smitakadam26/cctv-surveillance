@@ -44,10 +44,10 @@ function Alerts() {
               index === self.findIndex((a) => a.id === item.id)
           );
 
-          // ✅ Keep only last 5 minutes
+          // ✅ Keep only last 1 minutes
           const filtered = unique.filter((a) => {
             const alertTime = parseCustomDate(a.timestamp);
-            return now - alertTime <= 5 * 60 * 1000;
+            return now - alertTime <= 1 * 60 * 1000;
           });
 
           // ✅ Sort by priority + latest time
