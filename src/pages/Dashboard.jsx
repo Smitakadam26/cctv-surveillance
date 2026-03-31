@@ -1,12 +1,20 @@
 import { useEffect, useState } from 'react';
-import { fetchAlerts } from '../api';
 import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { io } from "socket.io-client";
 
+const socket = io("http://localhost:5000");
 export const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    socket.on("new-alert", (alert) => {
+      setAlerts(prev => [alert, ...prev]);
+    });
+
+    return () => {
+      socket.off("new-alert");
+    };
+  }, []);/*
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -38,7 +46,7 @@ export const Dashboard = () => {
         <p className="flex items-center"><AlertTriangle className="mr-2 h-5 w-5"/> Error: {error}</p>
       </div>
     );
-  }
+  }*/
 
   const totalAlerts = alerts.length;
   const activeAlerts = alerts.filter(a => a.status === 'active').length;

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { fetchAlerts } from '../api';
 import { AlertDetailsModal } from '../components/AlertDetailsModal';
 import { AlertTriangle, Filter, Eye } from 'lucide-react';
 
@@ -10,6 +9,26 @@ export const AlertsList = () => {
   const [selectedAlert, setSelectedAlert] = useState(null);
   const [filter, setFilter] = useState('all'); 
 
+  useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const res = await fetch("/api/alerts");
+      const data = await res.json();
+      setLoading(true);
+      setAlerts(prev => [...data, ...prev]); 
+      setError(null);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Failed to fetch alerts');
+    }
+    finally {
+        setLoading(false);
+      }
+  }, 3000); 
+
+  return () => clearInterval(interval);
+}, []);
+/*
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -26,7 +45,7 @@ export const AlertsList = () => {
     
     loadData();
   }, []);
-
+*/
   const filteredAlerts = alerts.filter(alert => {
     if (filter === 'all') return true;
     return alert.status === filter;

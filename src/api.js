@@ -53,4 +53,5 @@ export const fetchAlerts = async () => {
       
     }, 800);
   });
+  
 };
