@@ -1,29 +1,8 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
-const [selectedAlert, setSelectedAlert] = useState(null);
 
-  // ✅ Parse custom timestamp
-  const parseCustomDate = (str) => {
-    if (!str) return Date.now();
-
-    const [datePart, timePart] = str.split(" ");
-    const [day, monthText, year] = datePart.split("-");
-
-    const months = {
-      January: 0, February: 1, March: 2, April: 3,
-      May: 4, June: 5, July: 6, August: 7,
-      September: 8, October: 9, November: 10, December: 11
-    };
-
-    return new Date(
-      year,
-      months[monthText],
-      parseInt(day),
-      ...timePart.split(":").map(Number)
-    );
-  };
   const fetchAlerts = async () => {
     try {
       const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
@@ -74,7 +53,7 @@ const [selectedAlert, setSelectedAlert] = useState(null);
                 <tr
                   key={alert.id}
                   className="hover:bg-slate-800/50 transition group cursor-pointer"
-                  onClick={() => setSelectedAlert(alert)}
+                  
                 >
                   <td className="px-6 py-4 text-slate-200 font-medium">
                     {alert.id}
@@ -89,7 +68,7 @@ const [selectedAlert, setSelectedAlert] = useState(null);
                   </td>
 
                   <td className="px-6 py-4 text-slate-400">
-                    {parseCustomDate(alert.timestamp).toLocaleString()}
+                    {alert.timestamp}
                   </td>
 
                   {/* ✅ Priority badge */}
@@ -128,16 +107,7 @@ const [selectedAlert, setSelectedAlert] = useState(null);
         </table>
       </div>
 
-      {/* ✅ Optional modal */}
-      {selectedAlert && (
-        <div className="p-4 border-t border-slate-700 text-slate-300">
-          <h3 className="font-semibold mb-2">Alert Details</h3>
-          <p><b>Crime:</b> {selectedAlert.crime_type}</p>
-          <p><b>Location:</b> {selectedAlert.location}</p>
-          <p><b>Time:</b> {selectedAlert.timestamp}</p>
-          <p><b>Priority:</b> {selectedAlert.priority}</p>
-        </div>
-      )}
+      
     </div>
   );
 }
