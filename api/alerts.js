@@ -1,9 +1,13 @@
-let alerts = []; // temporary storage
+let alerts = [];
 
 export default function handler(req, res) {
-  // ✅ POST → receive alert
   if (req.method === "POST") {
-    const alert = req.body;
+    let alert = req.body;
+
+    // ✅ FIX: convert string → object
+    if (typeof alert === "string") {
+      alert = JSON.parse(alert);
+    }
 
     const newAlert = {
       id: Date.now(),
@@ -20,13 +24,9 @@ export default function handler(req, res) {
     });
   }
 
-  // ✅ GET → return all alerts
   if (req.method === "GET") {
     return res.status(200).json(alerts);
   }
 
-  // ❌ Other methods
-  return res.status(405).json({
-    message: "Method not allowed"
-  });
+  return res.status(405).json({ message: "Method not allowed" });
 }
