@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
-
+  const [selectedAlert,setSelectedAlert] = useState();
   const fetchAlerts = async () => {
     try {
       const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
@@ -13,12 +13,9 @@ function Alerts() {
       console.error(err);
     }
   };
-
-
   useEffect(() => {
-    fetchAlerts(); // initial load
-
-    const interval = setInterval(fetchAlerts, 3000); // every 3 sec
+    fetchAlerts(); 
+    const interval = setInterval(fetchAlerts, 3000); 
 
     return () => clearInterval(interval);
   }, []);
@@ -29,13 +26,13 @@ const handleResolve = (id) => {
       )
     );
   };
+
   return (
     <div>
      <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
       <div className="overflow-x-auto rounded-xl">
         <table className="w-full text-sm text-left text-slate-300">
 
-          {/* Header */}
           <thead className="bg-slate-800/60 text-xs uppercase text-slate-400 border-b border-slate-700">
             <tr>
               <th className="px-6 py-4">✔</th>
@@ -48,7 +45,6 @@ const handleResolve = (id) => {
             </tr>
           </thead>
 
-          {/* Body */}
           <tbody className="divide-y divide-slate-800">
             {alerts.length === 0 ? (
               <tr>
@@ -67,7 +63,6 @@ const handleResolve = (id) => {
                   ${alert.status === "resolved" ? "opacity-50 line-through" : ""}
                   `}
                 >
-                  {/* ✅ Checkbox */}
                   <td className="px-6 py-4">
                     <input
                       type="checkbox"
@@ -77,24 +72,20 @@ const handleResolve = (id) => {
                     />
                   </td>
 
-                  {/* Crime Type */}
                   <td className="px-6 py-4">
                     <span className="px-3 py-1 rounded-full bg-slate-700/50 text-xs">
                       {alert.crime_type}
                     </span>
                   </td>
 
-                  {/* Location */}
                   <td className="px-6 py-4 text-slate-400">
                     📍 {alert.location.replaceAll("_", " ")}
                   </td>
 
-                  {/* Timestamp */}
                   <td className="px-6 py-4 text-slate-500 text-xs">
                     {new Date(alert.timestamp).toLocaleString()}
                   </td>
 
-                  {/* Priority */}
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold
@@ -110,7 +101,6 @@ const handleResolve = (id) => {
                     </span>
                   </td>
 
-                  {/* Status */}
                   <td className="px-6 py-4">
                     <span
                       className={`px-3 py-1 text-xs font-semibold rounded-full border
@@ -124,9 +114,8 @@ const handleResolve = (id) => {
                     </span>
                   </td>
 
-                  {/* Action */}
                   <td className="px-6 py-4 text-right">
-                    <button className="p-2 rounded-lg bg-slate-800 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition">
+                    <button className="p-2 rounded-lg bg-slate-800 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition" onClick={()=>{setSelectedAlert(alert)}}>
                       👁️
                     </button>
                   </td>
@@ -138,6 +127,12 @@ const handleResolve = (id) => {
         </table>
       </div>
     </div>
+     {selectedAlert && (
+        <AlertDetailsModal 
+          alert={selectedAlert} 
+          onClose={() => setSelectedAlert(null)} 
+        />
+      )}
     </div>
   );
 }

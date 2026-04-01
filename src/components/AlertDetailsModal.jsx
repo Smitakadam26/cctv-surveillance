@@ -28,9 +28,9 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
 
         <div className="p-6">
           <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
-            {alert.image_url ? (
+            {alert.image ? (
               <img 
-                src={alert.image_url} 
+                src={alert.image_data} 
                 alt="Crime snapshot" 
                 className="w-full h-auto object-cover max-h-64"
               />
