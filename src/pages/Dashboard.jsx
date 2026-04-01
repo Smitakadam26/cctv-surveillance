@@ -4,7 +4,7 @@ import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
 export const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
   const [loading,setLoading] = useState();
-  
+
    const fetchAlerts = async () => {
     try {
       setLoading(true);
@@ -26,14 +26,14 @@ export const Dashboard = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (loading) {
+  {/*if (loading) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500">
         </div>
       </div>
     );
-  }
+  }*/}
 
 
   const totalAlerts = alerts.length;
