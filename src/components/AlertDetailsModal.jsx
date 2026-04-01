@@ -2,6 +2,7 @@ import { X, MapPin, Camera, AlertTriangle, Clock } from 'lucide-react';
 
 export const AlertDetailsModal = ({ alert, onClose }) => {
   if (!alert) return null;
+  /*
   const getImageSrc = (data) => {
   if (!data) return null;
 
@@ -10,7 +11,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
 
   // Otherwise add prefix
   return `data:image/jpeg;base64,${data}`;
-};
+};*/
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
 
@@ -47,7 +48,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
                 <Camera className="h-10 w-10 mb-2 opacity-50" />
                 <span>No Image Available</span>
               </div>
-            )}*/}
+            )}
             
             <div className="absolute top-3 right-3">
               <span className={`px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md ${
@@ -57,7 +58,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
               }`}>
                 {alert.status.toUpperCase()}
               </span>
-            </div>
+            </div>*/}
             
           </div>
 
