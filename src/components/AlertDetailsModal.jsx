@@ -2,7 +2,15 @@ import { X, MapPin, Camera, AlertTriangle, Clock } from 'lucide-react';
 
 export const AlertDetailsModal = ({ alert, onClose }) => {
   if (!alert) return null;
+  const getImageSrc = (data) => {
+  if (!data) return null;
 
+  // If already full data URL
+  if (data.startsWith("data:image")) return data;
+
+  // Otherwise add prefix
+  return `data:image/jpeg;base64,${data}`;
+};
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
 
@@ -30,7 +38,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
           <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
             {alert.image_data ? (
               <img 
-                src={alert.image_data} 
+                src={getImageSrc(alert.image_data)} 
                 alt="Crime snapshot" 
                 className="w-full h-auto object-cover max-h-64"
               />
