@@ -31,15 +31,15 @@ function Alerts() {
       )
     );
   };
-const getImageSrc = (data) => {
-  if (!data) return null;
+  const getImageSrc = (data) => {
+    if (!data) return null;
 
-  // If already full data URL
-  if (data.startsWith("data:image")) return data;
+    // If already full data URL
+    if (data.startsWith("data:image")) return data;
 
-  // Otherwise add prefix
-  return `data:image/jpeg;base64,${data}`;
-}
+    // Otherwise add prefix
+    return `data:image/jpeg;base64,${data}`;
+  }
   return (
     <div>
       <button
@@ -132,29 +132,30 @@ const getImageSrc = (data) => {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4 text-right">
-                      
-                        {alert.image_data ? (
-                          <img
-                            src={getImageSrc(alert.image_data)}
-                            alt="Crime snapshot"
-                            className="w-full h-auto object-cover max-h-64"
-                          />
-                        ) : (
-                          <div className="text-slate-600 flex flex-col items-center">
-                            <Camera className="h-10 w-10 mb-2 opacity-50" />
-                            <span>No Image Available</span>
-                          </div>
-                        )}
-
-                        <div className="absolute top-3 right-3">
-                          <span className={`px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md ${alert.status === 'active'
-                              ? 'bg-red-500/20 text-red-200 border-red-500/50'
-                              : 'bg-emerald-500/20 text-emerald-200 border-emerald-500/50'
-                            }`}>
-                            {alert.status.toUpperCase()}
-                          </span>
+                    <td className="px-6 py-4 text-right relative">
+                      {alert.image_data ? (
+                        <img
+                          src={getImageSrc(alert.image_data)}
+                          alt="Crime snapshot"
+                          className="w-16 h-16 object-cover rounded-lg border border-slate-700"
+                        />
+                      ) : (
+                        <div className="text-slate-600 flex flex-col items-center">
+                          <Camera className="h-6 w-6 mb-1 opacity-50" />
+                          <span className="text-xs">No Image</span>
                         </div>
+                      )}
+
+                      <div className="absolute top-1 right-1">
+                        <span
+                          className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${alert.status === "active"
+                              ? "bg-red-500/20 text-red-200 border-red-500/50"
+                              : "bg-emerald-500/20 text-emerald-200 border-emerald-500/50"
+                            }`}
+                        >
+                          {alert.status.toUpperCase()}
+                        </span>
+                      </div>
                     </td>
                   </tr>
                 ))
