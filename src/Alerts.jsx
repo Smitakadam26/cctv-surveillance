@@ -13,17 +13,11 @@ function Alerts() {
       console.error(err);
     }
   };
-<<<<<<< HEAD
+
 
   useEffect(() => {
     fetchAlerts(); // initial load
 
-=======
-
-  useEffect(() => {
-    fetchAlerts(); // initial load
-
->>>>>>> 120b42b06d52f0b4a2fdc430fad365edd38d626b
     const interval = setInterval(fetchAlerts, 3000); // every 3 sec
 
     return () => clearInterval(interval);
@@ -63,7 +57,7 @@ const handleResolve = (id) => {
                 </td>
               </tr>
             ) : (
-              aler.map((alert) => (
+              alerts.map((alert) => (
                 <tr
                   key={alert.id}
                   className={`group transition-all duration-300 hover:bg-slate-800/40
