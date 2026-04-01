@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState();
+  const [previewImage, setPreviewImage] = useState(null);
   const fetchAlerts = async () => {
     try {
       setLoading(true);
@@ -60,7 +61,6 @@ function Alerts() {
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Timestamp</th>
                 <th className="px-6 py-4">Priority</th>
-                <th className="px-6 py-4">Status</th>
                 <th className="px-6 py-4 text-right">Action</th>
               </tr>
             </thead>
@@ -120,17 +120,7 @@ function Alerts() {
                       </span>
                     </td>
 
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 text-xs font-semibold rounded-full border
-                      ${alert.status === "active"
-                            ? "bg-red-500/10 text-red-400 border-red-500/30"
-                            : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
-                          }`}
-                      >
-                        {alert.status}
-                      </span>
-                    </td>
+                    
 
                     <td className="px-6 py-4 text-right relative">
                       {alert.image_data ? (
@@ -138,6 +128,7 @@ function Alerts() {
                           src={getImageSrc(alert.image_data)}
                           alt="Crime snapshot"
                           className="w-16 h-16 object-cover rounded-lg border border-slate-700"
+                          onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
                         />
                       ) : (
                         <div className="text-slate-600 flex flex-col items-center">
@@ -156,6 +147,33 @@ function Alerts() {
           </table>
         </div>
       </div>
+      {previewImage && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    
+    {/* Close on background click */}
+    <div
+      className="absolute inset-0"
+      onClick={() => setPreviewImage(null)}
+    ></div>
+
+    {/* Image */}
+    <div className="relative z-10 max-w-4xl w-full p-4">
+      <img
+        src={previewImage}
+        alt="Preview"
+        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
+
+      {/* Close button */}
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
