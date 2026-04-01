@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
-  const [selectedAlert, setSelectedAlert] = useState();
-  const [loading,setLoading] = useState();
+  const [loading, setLoading] = useState();
   const fetchAlerts = async () => {
     try {
       setLoading(true);
@@ -11,11 +10,11 @@ function Alerts() {
       const data = await res.json();
       console.log(data)
       setAlerts(data);
-      
+
     } catch (err) {
       console.error(err);
     }
-    finally{
+    finally {
       setLoading(false);
     }
   };
@@ -32,7 +31,15 @@ function Alerts() {
       )
     );
   };
+const getImageSrc = (data) => {
+  if (!data) return null;
 
+  // If already full data URL
+  if (data.startsWith("data:image")) return data;
+
+  // Otherwise add prefix
+  return `data:image/jpeg;base64,${data}`;
+}
   return (
     <div>
       <button
@@ -126,9 +133,28 @@ function Alerts() {
                     </td>
 
                     <td className="px-6 py-4 text-right">
-                      <button className="p-2 rounded-lg bg-slate-800 hover:bg-blue-500/20 text-slate-400 hover:text-blue-400 transition" onClick={() => { setSelectedAlert(alert) }}>
-                        👁️
-                      </button>
+                      
+                        {alert.image_data ? (
+                          <img
+                            src={getImageSrc(alert.image_data)}
+                            alt="Crime snapshot"
+                            className="w-full h-auto object-cover max-h-64"
+                          />
+                        ) : (
+                          <div className="text-slate-600 flex flex-col items-center">
+                            <Camera className="h-10 w-10 mb-2 opacity-50" />
+                            <span>No Image Available</span>
+                          </div>
+                        )}
+
+                        <div className="absolute top-3 right-3">
+                          <span className={`px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md ${alert.status === 'active'
+                              ? 'bg-red-500/20 text-red-200 border-red-500/50'
+                              : 'bg-emerald-500/20 text-emerald-200 border-emerald-500/50'
+                            }`}>
+                            {alert.status.toUpperCase()}
+                          </span>
+                        </div>
                     </td>
                   </tr>
                 ))
@@ -138,12 +164,6 @@ function Alerts() {
           </table>
         </div>
       </div>
-      {selectedAlert && (
-        <AlertDetailsModal
-          alert={selectedAlert}
-          onClose={() => setSelectedAlert(null)}
-        />
-      )}
     </div>
   );
 }
