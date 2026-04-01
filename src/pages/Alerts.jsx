@@ -146,16 +146,7 @@ function Alerts() {
                         </div>
                       )}
 
-                      <div className="absolute top-1 right-1">
-                        <span
-                          className={`px-2 py-0.5 text-[10px] font-semibold rounded-full border ${alert.status === "active"
-                              ? "bg-red-500/20 text-red-200 border-red-500/50"
-                              : "bg-emerald-500/20 text-emerald-200 border-emerald-500/50"
-                            }`}
-                        >
-                          {alert.status.toUpperCase()}
-                        </span>
-                      </div>
+                     
                     </td>
                   </tr>
                 ))
