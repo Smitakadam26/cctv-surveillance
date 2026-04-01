@@ -13,10 +13,17 @@ function Alerts() {
       console.error(err);
     }
   };
+<<<<<<< HEAD
 
   useEffect(() => {
     fetchAlerts(); // initial load
 
+=======
+
+  useEffect(() => {
+    fetchAlerts(); // initial load
+
+>>>>>>> 120b42b06d52f0b4a2fdc430fad365edd38d626b
     const interval = setInterval(fetchAlerts, 3000); // every 3 sec
 
     return () => clearInterval(interval);
@@ -30,11 +37,6 @@ const handleResolve = (id) => {
   };
   return (
     <div>
-      {alerts.map((a) => (
-        <div key={a.id}>
-          {a.crime_type} - {a.location} - 
-        </div>
-      ))}
      <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
       <div className="overflow-x-auto rounded-xl">
         <table className="w-full text-sm text-left text-slate-300">
