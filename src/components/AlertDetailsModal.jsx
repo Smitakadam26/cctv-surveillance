@@ -36,7 +36,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
 
         <div className="p-6">
           <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
-            {alert.image_data ? (
+            {/*{alert.image_data ? (
               <img 
                 src={getImageSrc(alert.image_data)} 
                 alt="Crime snapshot" 
@@ -47,7 +47,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
                 <Camera className="h-10 w-10 mb-2 opacity-50" />
                 <span>No Image Available</span>
               </div>
-            )}
+            )}*/}
             
             <div className="absolute top-3 right-3">
               <span className={`px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md ${
