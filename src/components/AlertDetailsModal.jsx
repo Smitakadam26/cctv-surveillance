@@ -28,7 +28,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
 
         <div className="p-6">
           <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
-            {alert.image ? (
+            {alert.image_data ? (
               <img 
                 src={alert.image_data} 
                 alt="Crime snapshot" 
@@ -51,11 +51,6 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
               </span>
             </div>
             
-            <div className="absolute bottom-3 left-3">
-              <span className="px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md bg-slate-900/80 text-blue-300 border-blue-500/50">
-                AI Confidence: {(alert.confidence * 100).toFixed(0)}%
-              </span>
-            </div>
           </div>
 
           <div className="space-y-4">
