@@ -2,6 +2,7 @@ import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, ShieldAlert, Zap } from 'lucide-react';
 
 const Sidebar = () => {
+  
   return (
     <div className="w-64 h-screen bg-slate-900 border-r border-slate-800 flex flex-col fixed">
       <div className="p-6 flex items-center space-x-3 mb-6">

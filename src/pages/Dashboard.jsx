@@ -1,35 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Activity, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { io } from "socket.io-client";
 
-const socket = io("http://localhost:5000");
 export const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
-
+  const [loading,setLoading] = useState();
+   const fetchAlerts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
+      const data = await res.json();
+      console.log(data)
+      setAlerts(data);
+      
+    } catch (err) {
+      console.error(err);
+    }
+    finally{
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    socket.on("new-alert", (alert) => {
-      setAlerts(prev => [alert, ...prev]);
-    });
+    fetchAlerts();
+    const interval = setInterval(fetchAlerts, 3000);
 
-    return () => {
-      socket.off("new-alert");
-    };
-  }, []);/*
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchAlerts();
-        setAlerts(data);
-        setError(null);
-      } catch (err) {
-        setError(err.message || 'Failed to fetch alerts');
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadData();
+    return () => clearInterval(interval);
   }, []);
 
   if (loading) {
@@ -40,16 +34,9 @@ export const Dashboard = () => {
     );
   }
 
-  if (error) {
-    return (
-      <div className="bg-red-900/50 border border-red-500 text-red-100 px-4 py-3 rounded-md">
-        <p className="flex items-center"><AlertTriangle className="mr-2 h-5 w-5"/> Error: {error}</p>
-      </div>
-    );
-  }*/
 
   const totalAlerts = alerts.length;
-  const activeAlerts = alerts.filter(a => a.status === 'active').length;
+  const activeAlerts = alerts.filter(a => a.status === 'Active').length;
   const resolvedAlerts = alerts.filter(a => a.status === 'resolved').length;
 
   return (
