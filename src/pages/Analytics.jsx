@@ -47,13 +47,11 @@ export const Analytics = () => {
     }, []);
 
     const hasActiveAlert = (locationName) => {
-        return alerts.some(alert =>
-            alert.status === 'active' &&
-            alert.location &&
-            (alert.location.toLowerCase().includes(locationName.toLowerCase()) ||
-                locationName.toLowerCase().includes(alert.location.toLowerCase()))
-        );
-    };
+    return alerts.some(alert =>
+        alert.location &&
+        alert.location.toLowerCase().includes(locationName.toLowerCase())
+    );
+};
 
 
     return (
@@ -76,7 +74,7 @@ export const Analytics = () => {
                     />
 
                     {KNOWN_LOCATIONS.map((loc) => {
-                        const isAlerting = hasActiveAlert(loc.name) || (loc.cctv_id ===alerts);
+                        const isAlerting = hasActiveAlert(loc.name) ;
                         const cameraAlerts = alerts.filter(a =>  a.location.toLowerCase().includes(loc.name.toLowerCase()));
 
                         return (
