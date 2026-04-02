@@ -55,8 +55,6 @@ export const Analytics = () => {
         );
     };
 
-    const activeAlertsExist = alerts.some(a => a.status === 'active');
-    const fallbackAlertLocationId = activeAlertsExist ? KNOWN_LOCATIONS[0].cctv_id : null;
 
     return (
         <div className="space-y-6 h-full flex flex-col">
@@ -78,7 +76,7 @@ export const Analytics = () => {
                     />
 
                     {KNOWN_LOCATIONS.map((loc) => {
-                        const isAlerting = hasActiveAlert(loc.name) || (loc.cctv_id === fallbackAlertLocationId);
+                        const isAlerting = hasActiveAlert(loc.name) || (loc.cctv_id ===alerts);
                         const cameraAlerts = alerts.filter(a =>  a.location.toLowerCase().includes(loc.name.toLowerCase()));
 
                         return (
