@@ -31,6 +31,7 @@ const Sidebar = () => {
           <ShieldAlert className="h-5 w-5" />
           <span>Alerts</span>
         </NavLink>
+        
       </nav>
       
       <div className="p-4 mt-auto mb-4 mx-4 bg-slate-800 rounded-lg text-sm text-slate-400 text-center">

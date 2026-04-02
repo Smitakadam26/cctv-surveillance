@@ -4,6 +4,7 @@ function Alerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState();
   const [previewImage, setPreviewImage] = useState(null);
+  
   const fetchAlerts = async () => {
     try {
       setLoading(true);
