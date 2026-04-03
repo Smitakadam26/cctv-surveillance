@@ -4,14 +4,25 @@ function Alerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState();
   const [previewImage, setPreviewImage] = useState(null);
-  
+  const [resolvedAlerts, setResolvedAlerts] = useState(() => {
+  const saved = localStorage.getItem("resolvedAlerts");
+  return saved ? JSON.parse(saved) : [];
+});
   const fetchAlerts = async () => {
     try {
       setLoading(true);
       const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
       const data = await res.json();
       console.log(data)
-      setAlerts(data);
+      setAlerts(prev => {
+  const filtered = data.filter(
+    newA =>
+      !resolvedAlerts.some(r => r.id === newA.id) && // ignore resolved
+      !prev.some(old => old.id === newA.id)          // avoid duplicates
+  );
+
+  return [...filtered, ...prev];
+});
 
     } catch (err) {
       console.error(err);
@@ -23,16 +34,20 @@ function Alerts() {
   useEffect(() => {
     fetchAlerts();
     const interval = setInterval(fetchAlerts, 3000);
-
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+    localStorage.setItem("resolvedAlerts", JSON.stringify(resolvedAlerts));
+  }, [resolvedAlerts]);
   const handleResolve = (id) => {
-    setAlerts((prev) =>
-      prev.map((a) =>
-        a.id === id ? { ...a, status: "resolved" } : a
-      )
-    );
-  };
+  const alertToResolve = alerts.find(a => a.id === id);
+
+  // remove from active
+  setAlerts(prev => prev.filter(a => a.id !== id));
+
+  // add to resolved
+  setResolvedAlerts(prev => [alertToResolve, ...prev]);
+};
   const getImageSrc = (data) => {
     if (!data) return null;
 
@@ -42,15 +57,45 @@ function Alerts() {
     // Otherwise add prefix
     return `data:image/jpeg;base64,${data}`;
   }
+   const downloadResolved = () => {
+    const data = {
+      totalResolved: resolvedAlerts.length,
+      resolvedAlerts
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "resolved_alerts.json";
+    a.click();
+  };
+   const allAlerts = [...alerts, ...resolvedAlerts];
   return (
     <div>
-      <button
-        onClick={fetchAlerts}
-        disabled={loading}
-        className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition disabled:opacity-50"
-      >
-        {loading ? "Refreshing..." : "🔄 Refresh Alerts"}
-      </button>
+      <div className="flex gap-3 mb-4">
+        <button
+          onClick={fetchAlerts}
+          disabled={loading}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+        >
+          {loading ? "Refreshing..." : "🔄 Refresh"}
+        </button>
+
+        <button
+          onClick={downloadResolved}
+          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
+        >
+          📥 Export Resolved
+        </button>
+      </div>
+        <div className="flex gap-6 mb-4 text-sm">
+        <p className="text-red-400">Active: {alerts.length}</p>
+        <p className="text-green-400">Resolved: {resolvedAlerts.length}</p>
+      </div>
       <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
         <div className="overflow-x-auto rounded-xl">
           <table className="w-full text-sm text-left text-slate-300">
@@ -67,81 +112,73 @@ function Alerts() {
             </thead>
 
             <tbody className="divide-y divide-slate-800">
-              {alerts.length === 0 ? (
+             {allAlerts.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan="6" className="text-center py-10 text-slate-500">
                     No alerts found
                   </td>
                 </tr>
               ) : (
-                alerts.map((alert) => (
-                  <tr
-                    key={alert.id}
-                    className={`group transition-all duration-300 hover:bg-slate-800/40
-                  ${alert.priority === "high" ? "border-l-4 border-red-500" : ""}
-                  ${alert.priority === "medium" ? "border-l-4 border-yellow-500" : ""}
-                  ${alert.priority === "low" ? "border-l-4 border-green-500" : ""}
-                  ${alert.status === "resolved" ? "opacity-50 line-through" : ""}
-                  `}
-                  >
-                    <td className="px-6 py-4">
-                      <input
-                        type="checkbox"
-                        checked={alert.status === "resolved"}
-                        onChange={() => handleResolve(alert.id)}
-                        className="w-4 h-4 accent-emerald-500 cursor-pointer"
-                      />
-                    </td>
+                allAlerts.map(alert => {
+                  const isResolved = resolvedAlerts.some(r => r.id === alert.id);
 
-                    <td className="px-6 py-4">
-                      <span className="px-3 py-1 rounded-full bg-slate-700/50 text-xs">
-                        {alert.crime_type}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-400">
-                      📍 {alert.location.replaceAll("_", " ")}
-                    </td>
-
-                    <td className="px-6 py-4 text-slate-500 text-xs">
-                      {new Date(alert.timestamp).toLocaleString()}
-                    </td>
-
-                    <td className="px-6 py-4">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold
-                      ${alert.priority === "high"
-                            ? "bg-red-500/10 text-red-400"
-                            : alert.priority === "medium"
-                              ? "bg-yellow-500/10 text-yellow-400"
-                              : "bg-green-500/10 text-green-400"
-                          }`}
-                      >
-                        {alert.priority.toUpperCase()}
-                      </span>
-                    </td>
-
-                    
-
-                    <td className="px-6 py-4 text-right relative">
-                      {alert.image_data ? (
-                        <img
-                          src={getImageSrc(alert.image_data)}
-                          alt="Crime snapshot"
-                          className="w-16 h-16 object-cover rounded-lg border border-slate-700"
-                          onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
+                  return (
+                    <tr
+                      key={alert.id}
+                      className={`border-b border-slate-800 hover:bg-slate-800/40
+                      ${isResolved ? "opacity-50 line-through" : ""}
+                      `}
+                    >
+                      {/* Checkbox */}
+                      <td className="px-6 py-4">
+                        <input
+                          type="checkbox"
+                          checked={isResolved}
+                          onChange={() => handleResolve(alert.id)}
+                          className="w-4 h-4 accent-green-500"
                         />
-                      ) : (
-                        <div className="text-slate-600 flex flex-col items-center">
-                          <Camera className="h-6 w-6 mb-1 opacity-50" />
-                          <span className="text-xs">No Image</span>
-                        </div>
-                      )}
+                      </td>
 
-                     
-                    </td>
-                  </tr>
-                ))
+                      {/* Crime */}
+                      <td className="px-6 py-4">
+                        {alert.crime_type}
+                      </td>
+
+                      {/* Location */}
+                      <td className="px-6 py-4">
+                        📍 {alert.location?.replaceAll("_", " ")}
+                      </td>
+
+                      {/* Time */}
+                      <td className="px-6 py-4 text-xs text-slate-400">
+                        {new Date(alert.timestamp).toLocaleString()}
+                      </td>
+
+                      {/* Priority */}
+                      <td className="px-6 py-4">
+                        <span className={`px-2 py-1 rounded text-xs
+                          ${alert.priority === "high" ? "bg-red-500/20 text-red-400" :
+                            alert.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
+                            "bg-green-500/20 text-green-400"}`}>
+                          {alert.priority}
+                        </span>
+                      </td>
+
+                      {/* Image */}
+                      <td className="px-6 py-4">
+                        {alert.image_data ? (
+                          <img
+                            src={getImageSrc(alert.image_data)}
+                            className="w-16 h-16 rounded object-cover cursor-pointer"
+                            onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
+                          />
+                        ) : (
+                          <span className="text-slate-500 text-xs">No Image</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
 
