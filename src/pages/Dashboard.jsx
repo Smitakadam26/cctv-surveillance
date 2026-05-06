@@ -48,13 +48,13 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <button
+      {/*<button
         onClick={fetchAlerts}
         disabled={loading}
         className="mb-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow transition disabled:opacity-50"
       >
         {loading ? "Refreshing..." : "🔄 Refresh Alerts"}
-      </button>
+      </button>*/}
       <div>
         <h1 className="text-3xl font-bold tracking-tight text-slate-50">Overview</h1>
         <p className="text-slate-400 mt-1">Real-time statistics of crime detection system.</p>

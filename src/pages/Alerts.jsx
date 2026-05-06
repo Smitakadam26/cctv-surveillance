@@ -57,40 +57,19 @@ function Alerts() {
     // Otherwise add prefix
     return `data:image/jpeg;base64,${data}`;
   }
-   const downloadResolved = () => {
-    const data = {
-      totalResolved: resolvedAlerts.length,
-      resolvedAlerts
-    };
-
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json"
-    });
-
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "resolved_alerts.json";
-    a.click();
-  };
    const allAlerts = [...alerts, ...resolvedAlerts];
   return (
     <div>
       <div className="flex gap-3 mb-4">
-        <button
+        {/*<button
           onClick={fetchAlerts}
           disabled={loading}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
         >
           {loading ? "Refreshing..." : "🔄 Refresh"}
-        </button>
+        </button>*/}
 
-        <button
-          onClick={downloadResolved}
-          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg"
-        >
-          📥 Export Resolved
-        </button>
+     
       </div>
         <div className="flex gap-6 mb-4 text-sm">
         <p className="text-red-400">Active: {alerts.length}</p>
