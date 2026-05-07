@@ -34,6 +34,16 @@ const Sidebar = () => {
           <span>Alerts</span>
         </NavLink>
         
+        <NavLink 
+          to="/locations" 
+          className={({ isActive }) => 
+            `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 ${isActive ? 'bg-blue-600 font-medium' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}`
+          }
+        >
+          <ShieldAlert className="h-5 w-5" />
+          <span>Location Management</span>
+        </NavLink>
+        
       </nav>
       
       <div className="p-4 mt-auto mb-4 mx-4 bg-slate-800 rounded-xl flex flex-col items-center border border-slate-700">

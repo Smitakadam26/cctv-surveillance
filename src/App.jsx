@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
 import { Dashbo } from './components/Dashbo';
+import { LocationManagement } from './layouts/LocationManagement';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Route element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="alerts" element={<Alerts />} />
+              <Route path="Locations" element={<LocationManagement/>}/>
               <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Route>
