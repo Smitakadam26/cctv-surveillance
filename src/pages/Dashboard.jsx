@@ -313,7 +313,7 @@ export const Dashboard = () => {
       </div>
 
       {/* Analytics */}
-      <Analytics />
+      <Analytics locations ={locations}/>
     </div>
   );
 };

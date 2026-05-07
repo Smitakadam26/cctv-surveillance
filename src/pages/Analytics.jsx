@@ -5,11 +5,6 @@ import 'leaflet/dist/leaflet.css';
 import { AlertTriangle, MapPin } from 'lucide-react';
 const DEFAULT_CENTER = [18.9692, 74.0168];
 
-const KNOWN_LOCATIONS = [
-    { cctv_id: 'Gate_CCTV_NORTH_01', name: "Main Entry", lat: 18.965088979894606, lng: 73.9967724321296 },
-    { cctv_id: 'CCTV_SOUTH_02', name: "Exit Gate", lat: 18.965600743189192, lng: 74.00807039797311 },
-];
-
 const createCustomIcon = (isAlerting) => {
     return L.divIcon({
         className: 'custom-icon border-0 bg-transparent',
@@ -23,7 +18,7 @@ const createCustomIcon = (isAlerting) => {
     });
 };
 
-export const Analytics = () => {
+export const Analytics = ({locations}) => {
     const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -73,7 +68,7 @@ export const Analytics = () => {
                         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     />
 
-                    {KNOWN_LOCATIONS.map((loc) => {
+                    {locations.map((loc) => {
                         const isAlerting = hasActiveAlert(loc.name) ;
                         const cameraAlerts = alerts.filter(a =>  a.location.toLowerCase().includes(loc.name.toLowerCase()));
 
