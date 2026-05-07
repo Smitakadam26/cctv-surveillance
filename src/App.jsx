@@ -5,6 +5,7 @@ import Alerts from './pages/Alerts';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Login } from './pages/Login';
+import { Dashbo } from './components/Dashbo';
 
 function App() {
   return (

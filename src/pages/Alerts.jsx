@@ -2,119 +2,83 @@ import { useEffect, useState } from "react";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
+  const [loading, setLoading] = useState();
   const [previewImage, setPreviewImage] = useState(null);
-
-  // Load resolved alerts from localStorage
   const [resolvedAlerts, setResolvedAlerts] = useState(() => {
-    const saved = localStorage.getItem("resolvedAlerts");
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  // Fetch alerts from API
+  const saved = localStorage.getItem("resolvedAlerts");
+  return saved ? JSON.parse(saved) : [];
+});
   const fetchAlerts = async () => {
     try {
-
-      const res = await fetch(
-        "https://cctv-surveillance.vercel.app/api/alerts"
-      );
-
+      setLoading(true);
+      const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
       const data = await res.json();
+      console.log(data)
+      setAlerts(prev => {
+  const filtered = data.filter(
+    newA =>
+      !resolvedAlerts.some(r => r.id === newA.id) && // ignore resolved
+      !prev.some(old => old.id === newA.id)          // avoid duplicates
+  );
 
-      // Remove alerts already resolved
-      const resolvedIds = resolvedAlerts.map((a) => a.id);
+  return [...filtered, ...prev];
+});
 
-      const activeAlerts = data.filter(
-        (alert) => !resolvedIds.includes(alert.id)
-      );
-
-      // Prevent duplicates
-      setAlerts((prev) => {
-        const existingIds = prev.map((a) => a.id);
-
-        const newAlerts = activeAlerts.filter(
-          (a) => !existingIds.includes(a.id)
-        );
-
-        return [...newAlerts, ...prev];
-      });
     } catch (err) {
       console.error(err);
-    } finally {
-      //setLoading(false);
+    }
+    finally {
+      setLoading(false);
     }
   };
-
-  // Initial load + polling
   useEffect(() => {
     fetchAlerts();
-
     const interval = setInterval(fetchAlerts, 3000);
-
     return () => clearInterval(interval);
-  });
-
-  // Save resolved alerts permanently
+  }, []);
   useEffect(() => {
-    localStorage.setItem(
-      "resolvedAlerts",
-      JSON.stringify(resolvedAlerts)
-    );
+    localStorage.setItem("resolvedAlerts", JSON.stringify(resolvedAlerts));
   }, [resolvedAlerts]);
-
-  // Resolve alert
   const handleResolve = (id) => {
-    const alertToResolve = alerts.find((a) => a.id === id);
+  const alertToResolve = alerts.find(a => a.id === id);
 
-    if (!alertToResolve) return;
+  // remove from active
+  setAlerts(prev => prev.filter(a => a.id !== id));
 
-    // Remove from active alerts
-    setAlerts((prev) => prev.filter((a) => a.id !== id));
-
-    // Add to resolved alerts
-    setResolvedAlerts((prev) => {
-      // Prevent duplicates
-      if (prev.some((a) => a.id === id)) return prev;
-
-      return [
-        {
-          ...alertToResolve,
-          resolvedAt: new Date().toISOString(),
-        },
-        ...prev,
-      ];
-    });
-  };
-
-  // Image helper
+  // add to resolved
+  setResolvedAlerts(prev => [alertToResolve, ...prev]);
+};
   const getImageSrc = (data) => {
     if (!data) return null;
 
+    // If already full data URL
     if (data.startsWith("data:image")) return data;
 
+    // Otherwise add prefix
     return `data:image/jpeg;base64,${data}`;
-  };
-
-  // Combine both lists
-  const allAlerts = [...alerts, ...resolvedAlerts];
-
+  }
+   const allAlerts = [...alerts, ...resolvedAlerts];
   return (
     <div>
-      
-      {/* Stats */}
-      <div className="flex gap-6 mb-4 text-sm">
-        <p className="text-red-400">
-          Active: {alerts.length}
-        </p>
+      <div className="flex gap-3 mb-4">
+        {/*<button
+          onClick={fetchAlerts}
+          disabled={loading}
+          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+        >
+          {loading ? "Refreshing..." : "🔄 Refresh"}
+        </button>*/}
 
-        <p className="text-green-400">
-          Resolved: {resolvedAlerts.length}
-        </p>
+     
       </div>
-
-      {/* Table */}
+        <div className="flex gap-6 mb-4 text-sm">
+        <p className="text-red-400">Active: {alerts.length}</p>
+        <p className="text-green-400">Resolved: {resolvedAlerts.length}</p>
+      </div>
       <div className="bg-slate-900 p-6 rounded-2xl shadow-xl border border-slate-800">
         <div className="overflow-x-auto rounded-xl">
           <table className="w-full text-sm text-left text-slate-300">
+
             <thead className="bg-slate-800/60 text-xs uppercase text-slate-400 border-b border-slate-700">
               <tr>
                 <th className="px-6 py-4">✔</th>
@@ -122,34 +86,26 @@ function Alerts() {
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Timestamp</th>
                 <th className="px-6 py-4">Priority</th>
-                <th className="px-6 py-4">Image</th>
+                <th className="px-6 py-4 text-right">Action</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-800">
-              {allAlerts.length === 0 ? (
+             {allAlerts.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan="6"
-                    className="text-center py-10 text-slate-500"
-                  >
+                  <td colSpan="6" className="text-center py-10 text-slate-500">
                     No alerts found
                   </td>
                 </tr>
               ) : (
-                allAlerts.map((alert) => {
-                  const isResolved = resolvedAlerts.some(
-                    (r) => r.id === alert.id
-                  );
+                allAlerts.map(alert => {
+                  const isResolved = resolvedAlerts.some(r => r.id === alert.id);
 
                   return (
                     <tr
                       key={alert.id}
-                      className={`
-                        hover:bg-slate-800/40
-                        ${isResolved
-                          ? "opacity-50 line-through"
-                          : ""}
+                      className={`border-b border-slate-800 hover:bg-slate-800/40
+                      ${isResolved ? "opacity-50 line-through" : ""}
                       `}
                     >
                       {/* Checkbox */}
@@ -157,10 +113,7 @@ function Alerts() {
                         <input
                           type="checkbox"
                           checked={isResolved}
-                          disabled={isResolved}
-                          onChange={() =>
-                            handleResolve(alert.id)
-                          }
+                          onChange={() => handleResolve(alert.id)}
                           className="w-4 h-4 accent-green-500"
                         />
                       </td>
@@ -172,32 +125,20 @@ function Alerts() {
 
                       {/* Location */}
                       <td className="px-6 py-4">
-                        📍{" "}
-                        {alert.location?.replaceAll(
-                          "_",
-                          " "
-                        )}
+                        📍 {alert.location?.replaceAll("_", " ")}
                       </td>
 
-                      {/* Timestamp */}
+                      {/* Time */}
                       <td className="px-6 py-4 text-xs text-slate-400">
-                        {new Date(
-                          alert.timestamp
-                        ).toLocaleString()}
+                        {new Date(alert.timestamp).toLocaleString()}
                       </td>
 
                       {/* Priority */}
                       <td className="px-6 py-4">
-                        <span
-                          className={`px-2 py-1 rounded text-xs
-                          ${
-                            alert.priority === "high"
-                              ? "bg-red-500/20 text-red-400"
-                              : alert.priority === "medium"
-                              ? "bg-yellow-500/20 text-yellow-400"
-                              : "bg-green-500/20 text-green-400"
-                          }`}
-                        >
+                        <span className={`px-2 py-1 rounded text-xs
+                          ${alert.priority === "high" ? "bg-red-500/20 text-red-400" :
+                            alert.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
+                            "bg-green-500/20 text-green-400"}`}>
                           {alert.priority}
                         </span>
                       </td>
@@ -206,23 +147,12 @@ function Alerts() {
                       <td className="px-6 py-4">
                         {alert.image_data ? (
                           <img
-                            src={getImageSrc(
-                              alert.image_data
-                            )}
-                            alt="alert"
+                            src={getImageSrc(alert.image_data)}
                             className="w-16 h-16 rounded object-cover cursor-pointer"
-                            onClick={() =>
-                              setPreviewImage(
-                                getImageSrc(
-                                  alert.image_data
-                                )
-                              )
-                            }
+                            onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
                           />
                         ) : (
-                          <span className="text-slate-500 text-xs">
-                            No Image
-                          </span>
+                          <span className="text-slate-500 text-xs">No Image</span>
                         )}
                       </td>
                     </tr>
@@ -230,34 +160,37 @@ function Alerts() {
                 })
               )}
             </tbody>
+
           </table>
         </div>
       </div>
-
-      {/* Image Preview */}
       {previewImage && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-          <div
-            className="absolute inset-0"
-            onClick={() => setPreviewImage(null)}
-          />
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    
+    {/* Close on background click */}
+    <div
+      className="absolute inset-0"
+      onClick={() => setPreviewImage(null)}
+    ></div>
 
-          <div className="relative z-10 max-w-4xl w-full p-4">
-            <img
-              src={previewImage}
-              alt="Preview"
-              className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
-            />
+    {/* Image */}
+    <div className="relative z-10 max-w-4xl w-full p-4">
+      <img
+        src={previewImage}
+        alt="Preview"
+        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
 
-            <button
-              onClick={() => setPreviewImage(null)}
-              className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
-            >
-              ✕
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Close button */}
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
