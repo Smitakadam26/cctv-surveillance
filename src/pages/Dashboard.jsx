@@ -6,15 +6,13 @@ import {  MapPin } from 'lucide-react';
 
 export const Dashboard = () => {
   const [alerts, setAlerts] = useState([]);
-  const [loading,setLoading] = useState();
   
   const KNOWN_LOCATIONS = [
   { cctv_id: 'Gate_CCTV_NORTH_01', name: "Exit gate", lat: 18.965088979894606 ,lng:73.9967724321296 },
-  { cctv_id: 'Gate_CCTV_SOUTH_02', name: "Entry Main gate", lat: 18.965600743189192, lng: 74.00807039797311},
+  { cctv_id: 'Gate_CCTV_SOUTH_02', name: "Front gate", lat: 18.965600743189192, lng: 74.00807039797311},
 ];
    const fetchAlerts = async () => {
     try {
-      setLoading(true);
       const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
       const data = await res.json();
       setAlerts(data);
@@ -23,7 +21,7 @@ export const Dashboard = () => {
       console.error(err);
     }
     finally{
-      setLoading(false);
+      //setLoading(false);
     }
   };
   useEffect(() => {
