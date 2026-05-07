@@ -13,8 +13,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (username, password) => {
     // Mock authentication check
-    if (username === 'admin' && password === 'password') {
-      const userData = { username: 'admin', role: 'admin' };
+    if (username === 'admin@gmail.com' && password === 'password123') {
+      const userData = { username: 'admin@gmail.com', role: 'admin' };
       setUser(userData);
       localStorage.setItem('user', JSON.stringify(userData));
       return true;
