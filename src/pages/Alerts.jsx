@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { AlertDetailsModal } from "../components/AlertDetailsModal";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState();
+  const [open,setopen] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [resolvedAlerts, setResolvedAlerts] = useState(() => {
   const saved = localStorage.getItem("resolvedAlerts");
@@ -87,6 +89,7 @@ function Alerts() {
                 <th className="px-6 py-4">Timestamp</th>
                 <th className="px-6 py-4">Priority</th>
                 <th className="px-6 py-4 text-right">Action</th>
+                 <th className="px-6 py-4 text-right">details</th>
               </tr>
             </thead>
 
@@ -155,6 +158,13 @@ function Alerts() {
                           <span className="text-slate-500 text-xs">No Image</span>
                         )}
                       </td>
+
+                    <td>
+                      <button onClick={()=>{setopen(true)}}>
+                        details
+                      </button>
+                      <AlertDetailsModal onClose={open} alert={alert}/>
+                    </td>
                     </tr>
                   );
                 })
@@ -191,6 +201,7 @@ function Alerts() {
     </div>
   </div>
 )}
+
     </div>
   );
 }
