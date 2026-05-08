@@ -6,6 +6,7 @@ function Alerts() {
   const [loading, setLoading] = useState();
   const [open,setopen] = useState(false);
   const [selectedAlert,setSelectedAlert] = useState();
+  const [previewImage, setPreviewImage] = useState(null);
   const [resolvedAlerts, setResolvedAlerts] = useState(() => {
   const saved = localStorage.getItem("resolvedAlerts");
   return saved ? JSON.parse(saved) : [];
@@ -81,6 +82,7 @@ function Alerts() {
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Priority</th>
                 <th className="px-6 py-4 text-right">Action</th>
+                 <th className="px-6 py-4 text-right">details</th>
               </tr>
             </thead>
 
@@ -137,14 +139,18 @@ function Alerts() {
                           <img
                             src={getImageSrc(alert.image_data)}
                             className="w-16 h-16 rounded object-cover cursor-pointer"
-                            onClick={() => setopen(true) ,setSelectedAlert(alert)}
+                            onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
                           />
                         ) : (
                           <span className="text-slate-500 text-xs">No Image</span>
                         )}
                       </td>
 
-                    
+                    <td>
+                      <button onClick={()=>{setopen(true) ,setSelectedAlert(alert)}}>
+                        details
+                      </button>
+                    </td>
                     </tr>
                   );
                 })
@@ -154,7 +160,33 @@ function Alerts() {
           </table>
         </div>
       </div>
-     
+      {previewImage && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    
+  
+    <div
+      className="absolute inset-0"
+      onClick={() => setPreviewImage(null)}
+    ></div>
+
+    {/* Image */}
+    <div className="relative z-10 max-w-4xl w-full p-4">
+      <img
+        src={previewImage}
+        alt="Preview"
+        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
+
+      {/* Close button */}
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
 {open && (
   <AlertDetailsModal
     alert={selectedAlert}
