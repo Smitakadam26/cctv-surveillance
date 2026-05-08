@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import { AlertTriangle, MapPin } from 'lucide-react';
 const DEFAULT_CENTER = [18.9692, 74.0168];
 
+
+
 const createCustomIcon = (isAlerting) => {
     return L.divIcon({
         className: 'custom-icon border-0 bg-transparent',

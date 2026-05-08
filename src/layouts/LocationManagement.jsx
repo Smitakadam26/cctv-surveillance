@@ -1,6 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, ShieldAlert, Zap, LogOut, User } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+
 
 import { useEffect, useState } from "react";
 import {
