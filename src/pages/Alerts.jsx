@@ -5,6 +5,7 @@ function Alerts() {
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState();
   const [open,setopen] = useState(false);
+  const [selectedAlert,setSelectedAlert] = useState();
   const [previewImage, setPreviewImage] = useState(null);
   const [resolvedAlerts, setResolvedAlerts] = useState(() => {
   const saved = localStorage.getItem("resolvedAlerts");
@@ -160,10 +161,9 @@ function Alerts() {
                       </td>
 
                     <td>
-                      <button onClick={()=>{setopen(true)}}>
+                      <button onClick={()=>{setopen(true)} ,setSelectedAlert(alert)}>
                         details
                       </button>
-                      <AlertDetailsModal onClose={open} alert={alert}/>
                     </td>
                     </tr>
                   );
@@ -201,7 +201,12 @@ function Alerts() {
     </div>
   </div>
 )}
-
+{open && (
+  <AlertDetailsModal
+    alert={selectedAlert}
+    onClose={() => setopen(false)}
+  />
+)}
     </div>
   );
 }
