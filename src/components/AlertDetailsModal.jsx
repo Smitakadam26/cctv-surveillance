@@ -1,17 +1,18 @@
 import { X, MapPin, Camera, AlertTriangle, Clock } from 'lucide-react';
+import { useState } from 'react';
 
 export const AlertDetailsModal = ({ alert, onClose }) => {
   if (!alert) return null;
-  /*
+  const [previewImage, setPreviewImage] = useState(null);
   const getImageSrc = (data) => {
-  if (!data) return null;
+    if (!data) return null;
 
-  // If already full data URL
-  if (data.startsWith("data:image")) return data;
+    // If already full data URL
+    if (data.startsWith("data:image")) return data;
 
-  // Otherwise add prefix
-  return `data:image/jpeg;base64,${data}`;
-};*/
+    // Otherwise add prefix
+    return `data:image/jpeg;base64,${data}`;
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
 
@@ -37,31 +38,44 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
 
         <div className="p-6">
           <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
-            {/*{alert.image_data ? (
-              <img 
-                src={getImageSrc(alert.image_data)} 
-                alt="Crime snapshot" 
-                className="w-full h-auto object-cover max-h-64"
-              />
-            ) : (
-              <div className="text-slate-600 flex flex-col items-center">
-                <Camera className="h-10 w-10 mb-2 opacity-50" />
-                <span>No Image Available</span>
-              </div>
-            )}
-            
-            <div className="absolute top-3 right-3">
-              <span className={`px-3 py-1 text-xs font-semibold rounded-full border shadow-sm backdrop-blur-md ${
-                alert.status === 'active' 
-                ? 'bg-red-500/20 text-red-200 border-red-500/50' 
-                : 'bg-emerald-500/20 text-emerald-200 border-emerald-500/50'
-              }`}>
-                {alert.status.toUpperCase()}
-              </span>
-            </div>*/}
+           {alert.image_data ? (
+                          <img
+                            src={getImageSrc(alert.image_data)}
+                            className="w-16 h-16 rounded object-cover cursor-pointer"
+                            onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
+                          />
+                        ) : (
+                          <span className="text-slate-500 text-xs">No Image</span>
+                        )}
             
           </div>
+{previewImage && (
+  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    
+  
+    <div
+      className="absolute inset-0"
+      onClick={() => setPreviewImage(null)}
+    ></div>
 
+    {/* Image */}
+    <div className="relative z-10 max-w-4xl w-full p-4">
+      <img
+        src={previewImage}
+        alt="Preview"
+        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+      />
+
+      {/* Close button */}
+      <button
+        onClick={() => setPreviewImage(null)}
+        className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">

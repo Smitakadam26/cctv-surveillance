@@ -64,13 +64,6 @@ function Alerts() {
   return (
     <div>
       <div className="flex gap-3 mb-4">
-        {/*<button
-          onClick={fetchAlerts}
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
-        >
-          {loading ? "Refreshing..." : "🔄 Refresh"}
-        </button>*/}
 
      
       </div>
@@ -87,7 +80,6 @@ function Alerts() {
                 <th className="px-6 py-4">✔</th>
                 <th className="px-6 py-4">Crime Type</th>
                 <th className="px-6 py-4">Location</th>
-                <th className="px-6 py-4">Timestamp</th>
                 <th className="px-6 py-4">Priority</th>
                 <th className="px-6 py-4 text-right">Action</th>
                  <th className="px-6 py-4 text-right">details</th>
@@ -133,9 +125,7 @@ function Alerts() {
                       </td>
 
                       {/* Time */}
-                      <td className="px-6 py-4 text-xs text-slate-400">
-                        {new Date(alert.timestamp).toLocaleString()}
-                      </td>
+                     
 
                       {/* Priority */}
                       <td className="px-6 py-4">
@@ -177,7 +167,7 @@ function Alerts() {
       {previewImage && (
   <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
     
-    {/* Close on background click */}
+  
     <div
       className="absolute inset-0"
       onClick={() => setPreviewImage(null)}
