@@ -63,7 +63,7 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
       <img
         src={previewImage}
         alt="Preview"
-        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+        className="w-full max-h-[100vh] object-contain rounded-xl shadow-2xl"
       />
 
       {/* Close button */}
