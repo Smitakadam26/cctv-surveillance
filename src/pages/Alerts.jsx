@@ -161,7 +161,7 @@ function Alerts() {
                       </td>
 
                     <td>
-                      <button onClick={()=>{setopen(true)} ,setSelectedAlert(alert)}>
+                      <button onClick={()=>{setopen(true) ,setSelectedAlert(alert)}}>
                         details
                       </button>
                     </td>
