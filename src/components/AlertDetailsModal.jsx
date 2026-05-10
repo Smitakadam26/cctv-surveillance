@@ -59,21 +59,21 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
               ></div>
 
               {/* Image */}
-              <div className="relative z-10 w-screen h-screen flex items-center justify-center p-4">
-                <img
-                  src={previewImage}
-                  alt="Preview"
-                  className="max-w-[95vw] max-h-[95vh] object-cover rounded-xl shadow-2xl"
-                />
+              <div className="relative z-10 w-[95vw] h-[95vh] flex items-center justify-center">
+  <img
+    src={previewImage}
+    alt="Preview"
+    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+  />
 
-                {/* Close button */}
-                <button
-                  onClick={() => setPreviewImage(null)}
-                  className="absolute top-4 right-4 bg-slate-800 text-white px-3 py-2 rounded-full hover:bg-red-500 transition"
-                >
-                  ✕
-                </button>
-              </div>
+  {/* Close button */}
+  <button
+    onClick={() => setPreviewImage(null)}
+    className="absolute top-4 right-4 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+  >
+    ✕
+  </button>
+</div>
             </div>
           )}
           <div className="space-y-4">
