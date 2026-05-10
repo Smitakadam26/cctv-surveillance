@@ -74,8 +74,10 @@ function Alerts() {
                 <th className="px-6 py-4">Crime Type</th>
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Priority</th>
-                <th className="px-6 py-4 text-right">Image</th>
-                <th className="px-6 py-4 text-right">Action</th>
+
+                {/* FIXED */}
+                <th className="px-6 py-4 text-center">Image</th>
+                <th className="px-6 py-4 text-center">Action</th>
               </tr>
             </thead>
 
