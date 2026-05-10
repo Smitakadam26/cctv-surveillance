@@ -37,45 +37,56 @@ export const AlertDetailsModal = ({ alert, onClose }) => {
         </div>
 
         <div className="p-6">
-          <div className="mb-6 rounded-lg overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-48 group">
-            {alert.image_data ? (
-              <img
-                src={getImageSrc(alert.image_data)}
-                className="w-16 h-16 rounded object-cover cursor-pointer"
-                onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
-              />
-            ) : (
-              <span className="text-slate-500 text-xs">No Image</span>
-            )}
+          <div className="mb-6 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center relative min-h-[300px] group p-2">
+  
+  {alert.image_data ? (
+    <>
+      {/* Main Image */}
+      <img
+        src={getImageSrc(alert.image_data)}
+        alt="Alert"
+        className="w-full max-h-[400px] object-contain rounded-lg cursor-pointer transition-transform duration-300 hover:scale-[1.02]"
+        onClick={() =>
+          setPreviewImage(getImageSrc(alert.image_data))
+        }
+      />
 
+      {/* Fullscreen Preview */}
+      {previewImage && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-sm">
+          
+          {/* Background Click Close */}
+          <div
+            className="absolute inset-0"
+            onClick={() => setPreviewImage(null)}
+          ></div>
+
+          {/* Preview Container */}
+          <div className="relative z-10 w-[95vw] h-[95vh] flex items-center justify-center">
+            
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+            />
+
+            {/* Close Button */}
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-4 right-4 bg-slate-800 text-white p-3 rounded-full hover:bg-red-500 transition-colors"
+            >
+              ✕
+            </button>
           </div>
-          {previewImage && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-
-
-              <div
-                className="absolute inset-0"
-                onClick={() => setPreviewImage(null)}
-              ></div>
-
-              {/* Image */}
-              <div className="relative z-10 w-[95vw] h-[95vh] flex items-center justify-center">
-  <img
-    src={previewImage}
-    alt="Preview"
-    className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
-  />
-
-  {/* Close button */}
-  <button
-    onClick={() => setPreviewImage(null)}
-    className="absolute top-4 right-4 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
-  >
-    ✕
-  </button>
+        </div>
+      )}
+    </>
+  ) : (
+    <span className="text-slate-500 text-sm">
+      No Image Available
+    </span>
+  )}
 </div>
-            </div>
-          )}
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
