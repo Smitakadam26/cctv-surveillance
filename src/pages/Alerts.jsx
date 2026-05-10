@@ -3,7 +3,6 @@ import { AlertDetailsModal } from "../components/AlertDetailsModal";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
-  const [loading, setLoading] = useState();
   const [open,setopen] = useState(false);
   const [selectedAlert,setSelectedAlert] = useState();
   const [previewImage, setPreviewImage] = useState(null);
@@ -13,7 +12,6 @@ function Alerts() {
 });
   const fetchAlerts = async () => {
     try {
-      setLoading(true);
       const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
       const data = await res.json();
       console.log(data)
@@ -29,9 +27,6 @@ function Alerts() {
 
     } catch (err) {
       console.error(err);
-    }
-    finally {
-      setLoading(false);
     }
   };
   useEffect(() => {

@@ -1,42 +1,80 @@
+import { useEffect, useState } from "react";
 import {
   PieChart,
   Pie,
   Cell,
   Tooltip,
   Legend,
+  ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  { name: "Theft", value: 35 },
-  { name: "Assault", value: 20 },
-  { name: "Weapon", value: 15 },
-  { name: "Suspicious", value: 30 },
-];
-
 const COLORS = [
-  "#3b82f6",
-  "#ef4444",
-  "#22c55e",
-  "#f59e0b",
+  "#3b82f6", // blue
+  "#ef4444", // red
+  "#22c55e", // green
+  "#f59e0b", // yellow
+  "#a855f7", // purple
+  "#06b6d4", // cyan
+  "#ec4899", // pink
 ];
 
 export default function CrimePieChart() {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchAlerts = async () => {
+      try {
+        const res = await fetch(
+          "https://cctv-surveillance.vercel.app/api/alerts"
+        );
+
+        const alerts = await res.json();
+
+        // Count crime types
+        const counts = {};
+
+        alerts.forEach((item) => {
+          const type = item.crime_type || "Unknown";
+
+          counts[type] = (counts[type] || 0) + 1;
+        });
+
+        // Convert object to array for recharts
+        const formatted = Object.keys(counts).map((key) => ({
+          name: key,
+          value: counts[key],
+        }));
+
+        setData(formatted);
+      } catch (err) {
+        console.error("Error fetching alerts:", err);
+      }
+    };
+
+    // Initial fetch
+    fetchAlerts();
+
+    // Fetch every 5 seconds
+    const interval = setInterval(fetchAlerts, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 overflow-hidden">
-      
+    <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full h-[450px]">
       <h2 className="text-xl font-semibold text-white mb-6">
-        Crime Distribution
+        Real-Time Crime Distribution
       </h2>
 
-      <div className="overflow-x-auto flex justify-center">
-        
-        <PieChart width={400} height={350}>
-          
+      <ResponsiveContainer width="100%" height="100%">
+        <PieChart>
           <Pie
             data={data}
             cx="50%"
             cy="50%"
-            outerRadius={120}
+            outerRadius={130}
+            innerRadius={60}
+            paddingAngle={3}
             dataKey="value"
             label
           >
@@ -51,10 +89,8 @@ export default function CrimePieChart() {
           <Tooltip />
 
           <Legend />
-
         </PieChart>
-
-      </div>
+      </ResponsiveContainer>
     </div>
   );
 }
