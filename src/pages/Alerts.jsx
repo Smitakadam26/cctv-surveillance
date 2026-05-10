@@ -74,8 +74,8 @@ function Alerts() {
                 <th className="px-6 py-4">Crime Type</th>
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Priority</th>
+                <th className="px-6 py-4 text-right">Image</th>
                 <th className="px-6 py-4 text-right">Action</th>
-                <th className="px-6 py-4 text-right">details</th>
               </tr>
             </thead>
 
@@ -139,9 +139,9 @@ function Alerts() {
                         )}
                       </td>
 
-                      <td>
+                      <td className="px-6 py-4">
                         <button onClick={() => { setopen(true), setSelectedAlert(alert) }}>
-                          details
+                          Details
                         </button>
                       </td>
                     </tr>
