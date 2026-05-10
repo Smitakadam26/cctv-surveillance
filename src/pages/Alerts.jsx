@@ -127,22 +127,30 @@ function Alerts() {
                       </td>
 
                       {/* Image */}
-                      <td className="px-6 py-4">
+                      <td className="px-6 py-4 text-center">
                         {alert.image_data ? (
                           <img
                             src={getImageSrc(alert.image_data)}
-                            className="w-16 h-16 rounded object-cover cursor-pointer"
-                            onClick={() => setPreviewImage(getImageSrc(alert.image_data))}
+                            className="w-16 h-16 rounded object-cover cursor-pointer mx-auto"
+                            onClick={() =>
+                              setPreviewImage(getImageSrc(alert.image_data))
+                            }
                           />
                         ) : (
-                          <span className="text-slate-500 text-xs">No Image</span>
+                          <span className="text-slate-500 text-xs">
+                            No Image
+                          </span>
                         )}
                       </td>
 
-                      <td className="px-6 py-4">
-                        <button onClick={() => { setopen(true), setSelectedAlert(alert) }}
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => {
+                            setopen(true);
+                            setSelectedAlert(alert);
+                          }}
                           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-all duration-200 shadow-md hover:shadow-lg"
-  >
+                        >
                           Details
                         </button>
                       </td>
