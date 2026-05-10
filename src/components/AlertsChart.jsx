@@ -21,10 +21,21 @@ export default function AlertsChart() {
 
         const alerts = await res.json();
 
-        // Convert API data into chart format
-        const formatted = alerts.map((item) => ({
-          time: new Date(item.timestamp).toLocaleString(),
-          alerts: item.count || 1,
+        // Count alerts per minute
+        const grouped = {};
+
+        alerts.forEach((item) => {
+          // Example:
+          // "02-April-2026 12:15:05"
+          const time = item.timestamp.slice(0, 17);
+
+          grouped[time] = (grouped[time] || 0) + 1;
+        });
+
+        // Convert to chart format
+        const formatted = Object.keys(grouped).map((time) => ({
+          time,
+          alerts: grouped[time],
         }));
 
         setData(formatted);
@@ -33,10 +44,8 @@ export default function AlertsChart() {
       }
     };
 
-    // Initial fetch
     fetchAlerts();
 
-    // Refresh every 5 sec
     const interval = setInterval(fetchAlerts, 5000);
 
     return () => clearInterval(interval);
@@ -45,7 +54,7 @@ export default function AlertsChart() {
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 w-full h-[420px]">
       <h2 className="text-xl font-semibold text-white mb-6">
-        Real-Time Alerts
+        Alerts Frequency
       </h2>
 
       <ResponsiveContainer width="100%" height="100%">
@@ -69,8 +78,7 @@ export default function AlertsChart() {
             dataKey="alerts"
             stroke="#3b82f6"
             strokeWidth={3}
-            dot={false}
-            isAnimationActive={true}
+            dot={true}
           />
         </LineChart>
       </ResponsiveContainer>

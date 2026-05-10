@@ -3,49 +3,47 @@ import { AlertDetailsModal } from "../components/AlertDetailsModal";
 
 function Alerts() {
   const [alerts, setAlerts] = useState([]);
-  const [open,setopen] = useState(false);
-  const [selectedAlert,setSelectedAlert] = useState();
+  const [open, setopen] = useState(false);
+  const [selectedAlert, setSelectedAlert] = useState();
   const [previewImage, setPreviewImage] = useState(null);
   const [resolvedAlerts, setResolvedAlerts] = useState(() => {
-  const saved = localStorage.getItem("resolvedAlerts");
-  return saved ? JSON.parse(saved) : [];
-});
-  const fetchAlerts = async () => {
-    try {
-      const res = await fetch("https://cctv-surveillance.vercel.app/api/alerts");
-      const data = await res.json();
-      console.log(data)
-      setAlerts(prev => {
-  const filtered = data.filter(
-    newA =>
-      !resolvedAlerts.some(r => r.id === newA.id) && // ignore resolved
-      !prev.some(old => old.id === newA.id)          // avoid duplicates
-  );
+    const saved = localStorage.getItem("resolvedAlerts");
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  return [...filtered, ...prev];
-});
-
-    } catch (err) {
-      console.error(err);
-    }
-  };
   useEffect(() => {
-    fetchAlerts();
-    const interval = setInterval(fetchAlerts, 3000);
+    const loadAlerts = async () => {
+      try {
+        const res = await fetch(
+          "https://cctv-surveillance.vercel.app/api/alerts"
+        );
+
+        const data = await res.json();
+
+        setAlerts(data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadAlerts();
+
+    const interval = setInterval(loadAlerts, 3000);
+
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
     localStorage.setItem("resolvedAlerts", JSON.stringify(resolvedAlerts));
   }, [resolvedAlerts]);
   const handleResolve = (id) => {
-  const alertToResolve = alerts.find(a => a.id === id);
+    const alertToResolve = alerts.find(a => a.id === id);
 
-  // remove from active
-  setAlerts(prev => prev.filter(a => a.id !== id));
+    // remove from active
+    setAlerts(prev => prev.filter(a => a.id !== id));
 
-  // add to resolved
-  setResolvedAlerts(prev => [alertToResolve, ...prev]);
-};
+    // add to resolved
+    setResolvedAlerts(prev => [alertToResolve, ...prev]);
+  };
   const getImageSrc = (data) => {
     if (!data) return null;
 
@@ -55,14 +53,14 @@ function Alerts() {
     // Otherwise add prefix
     return `data:image/jpeg;base64,${data}`;
   }
-   const allAlerts = [...alerts, ...resolvedAlerts];
+  const allAlerts = [...alerts, ...resolvedAlerts];
   return (
     <div>
       <div className="flex gap-3 mb-4">
 
-     
+
       </div>
-        <div className="flex gap-6 mb-4 text-sm">
+      <div className="flex gap-6 mb-4 text-sm">
         <p className="text-red-400">Active: {alerts.length}</p>
         <p className="text-green-400">Resolved: {resolvedAlerts.length}</p>
       </div>
@@ -77,12 +75,12 @@ function Alerts() {
                 <th className="px-6 py-4">Location</th>
                 <th className="px-6 py-4">Priority</th>
                 <th className="px-6 py-4 text-right">Action</th>
-                 <th className="px-6 py-4 text-right">details</th>
+                <th className="px-6 py-4 text-right">details</th>
               </tr>
             </thead>
 
             <tbody className="divide-y divide-slate-800">
-             {allAlerts.length === 0 ? (
+              {allAlerts.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="text-center py-10 text-slate-500">
                     No alerts found
@@ -123,7 +121,7 @@ function Alerts() {
                         <span className={`px-2 py-1 rounded text-xs
                           ${alert.priority === "high" ? "bg-red-500/20 text-red-400" :
                             alert.priority === "medium" ? "bg-yellow-500/20 text-yellow-400" :
-                            "bg-green-500/20 text-green-400"}`}>
+                              "bg-green-500/20 text-green-400"}`}>
                           {alert.priority}
                         </span>
                       </td>
@@ -141,11 +139,11 @@ function Alerts() {
                         )}
                       </td>
 
-                    <td>
-                      <button onClick={()=>{setopen(true) ,setSelectedAlert(alert)}}>
-                        details
-                      </button>
-                    </td>
+                      <td>
+                        <button onClick={() => { setopen(true), setSelectedAlert(alert) }}>
+                          details
+                        </button>
+                      </td>
                     </tr>
                   );
                 })
@@ -156,38 +154,38 @@ function Alerts() {
         </div>
       </div>
       {previewImage && (
-  <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
-    
-  
-    <div
-      className="absolute inset-0"
-      onClick={() => setPreviewImage(null)}
-    ></div>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
 
-    {/* Image */}
-    <div className="relative z-10 max-w-4xl w-full p-4">
-      <img
-        src={previewImage}
-        alt="Preview"
-        className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
-      />
 
-      {/* Close button */}
-      <button
-        onClick={() => setPreviewImage(null)}
-        className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
-      >
-        ✕
-      </button>
-    </div>
-  </div>
-)}
-{open && (
-  <AlertDetailsModal
-    alert={selectedAlert}
-    onClose={() => setopen(false)}
-  />
-)}
+          <div
+            className="absolute inset-0"
+            onClick={() => setPreviewImage(null)}
+          ></div>
+
+          {/* Image */}
+          <div className="relative z-10 max-w-4xl w-full p-4">
+            <img
+              src={previewImage}
+              alt="Preview"
+              className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+            />
+
+            {/* Close button */}
+            <button
+              onClick={() => setPreviewImage(null)}
+              className="absolute top-2 right-2 bg-slate-800 text-white p-2 rounded-full hover:bg-red-500"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+      {open && (
+        <AlertDetailsModal
+          alert={selectedAlert}
+          onClose={() => setopen(false)}
+        />
+      )}
     </div>
   );
 }
