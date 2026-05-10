@@ -23,7 +23,7 @@ export default function AlertsChart() {
 
         // Convert API data into chart format
         const formatted = alerts.map((item, index) => ({
-          time: new Date(item.timestamp).toLocaleTimeString(),
+          time: new Date(item.timestamp).toLocaleString(),
           alerts: item.count || 1,
         }));
 
