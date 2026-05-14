@@ -2,7 +2,7 @@ import StatsCards from './StatsCards';
 import AlertsChart from './AlertsChart';
 import CrimePieChart from './CrimePieChart';
 
-export const Dashbo = () => {
+export const Dashboard = () => {
   return (
     <div className="space-y-6">
       <div>
